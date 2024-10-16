@@ -1,5 +1,6 @@
-## 1. Import Libraries
-'''python
+```python
+# Import Libraries
+
 # Suppress Warnings
 import warnings
 warnings.filterwarnings('ignore')
@@ -14,4 +15,71 @@ import seaborn as sns
 
 # Linear Regression model and metrics
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, mean_absolute_error '''
+from sklearn.metrics import mean_squared_error, mean_absolute_error
+
+df = pd.read_csv("advertising.csv")
+df # Load the dataset from advertising.csv.
+
+df.shape #Displays the number of rows and columns in the dataset.
+
+df.describe() #Provides summary statistics like mean, min, and max values.
+
+df.isnull().sum() * 100 / df.shape[0] #Checks if there are any missing values. If the result is 0, the dataset is clean.
+
+fig, axs = plt.subplots(3, figsize=(5, 5))
+sns.boxplot(df['TV'], ax=axs[0])
+sns.boxplot(df['Newspaper'], ax=axs[1])
+sns.boxplot(df['Radio'], ax=axs[2])
+plt.tight_layout() #Detects outliers for TV, Newspaper, and Radio columns using boxplots.
+
+plt.scatter(df['TV'], df['Sales'], label='TV')
+plt.scatter(df['Radio'], df['Sales'], label='Radio')
+plt.scatter(df['Newspaper'], df['Sales'], label='Newspaper')
+plt.xlabel('Advertising Mediums')
+plt.ylabel('Sales')
+plt.title('Advertising Mediums vs Sales')
+plt.legend()
+plt.show() #Plots the relationships between sales and the three advertising mediums.
+
+sns.pairplot(df, x_vars=['TV', 'Radio', 'Newspaper'], y_vars='Sales', height=4, kind='scatter')
+plt.show() #Uses a pairplot to visualize relationships between variables.
+
+sns.heatmap(df.corr(), annot=True, cmap='YlGnBu')
+plt.show() #Displays the correlation between variables using a heatmap.
+
+# Selects TV as the independent feature and Sales as the target variable.
+x = df[['TV']]  # Feature
+s = df[['Sales']]  # Targe
+
+reg.fit(x, s) # Trains the linear regression model on the feature (TV) and target (Sales).
+
+m = reg.coef_
+c = reg.intercept_
+print(f"Slope: {m}, Intercept: {c}") #Retrieves the slope and intercept of the regression line.
+
+prediction = reg.predict([[177]])  # Predict for TV spend = 177
+print(f"Predicted Sales: {prediction}") #Predicts the sales for a TV advertisement budget of 177 units.
+
+df['Predicted_Y'] = reg.predict(x)
+df.head() #Adds the predicted sales to the DataFrame.
+
+df['lose'] = df['Sales'] - df['Predicted_Y'] # Calculate Residuals (Loss)
+df.head() 
+
+mse = mean_squared_error(df['Sales'], df['Predicted_Y'])
+mae = mean_absolute_error(df['Sales'], df['Predicted_Y'])
+print(f"MSE: {mse}, MAE: {mae}") 
+#MSE (Mean Squared Error): Measures the average squared error.
+# MAE (Mean Absolute Error): Measures the average magnitude of the errors.
+
+plt.plot(x, reg.predict(x), color='red', label='Regression Line')
+plt.scatter(df['TV'], df['Sales'], label='Actual Data')
+plt.xlabel('TV')
+plt.ylabel('Sales')
+plt.title('TV vs Sales Regression')
+plt.legend()
+plt.show() # Plots the regression line along with the actual data points.
+
+from sklearn.metrics import r2_score
+r2 = r2_score(df['Sales'], df['Predicted_Y']) # Calculate R² Score
+```
